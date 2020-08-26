@@ -6,23 +6,18 @@ import model.SaleModel;
 import model.SalesmanModel;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 public class FileService {
 
-    private String inDirectory = System.getProperty("user.home") + "/data/in";
-    private String outDirectory = System.getProperty("user.home") + "/data/out";
+    private final String inDirectory = System.getProperty("user.home") + "/data/in";
+    private final String outDirectory = System.getProperty("user.home") + "/data/out";
 
     public void readAllFilesFromDirectory() throws IOException {
 
