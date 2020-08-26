@@ -21,38 +21,8 @@ import java.util.List;
 
 public class FileService {
 
-    String inDirectory = System.getProperty("user.home") + "/data/in";
-    String outDirectory = System.getProperty("user.home") + "/data/out";
-
-//    public void watchDirectoryFiles() throws IOException, InterruptedException {
-//
-//        File directory = new File(inDirectory);
-//        if (!directory.exists()) {
-//            directory.mkdir();
-//        }
-//
-//        WatchService watchService
-//                = FileSystems.getDefault().newWatchService();
-//
-//        Path path = Paths.get(inDirectory);
-//
-//        path.register(
-//                watchService,
-//                StandardWatchEventKinds.ENTRY_CREATE,
-//                StandardWatchEventKinds.ENTRY_DELETE,
-//                StandardWatchEventKinds.ENTRY_MODIFY);
-//
-//        WatchKey key;
-//        while ((key = watchService.take()) != null) {
-//            for (WatchEvent<?> event : key.pollEvents()) {
-//
-//                System.out.println(
-//                        "Event kind:" + event.kind()
-//                                + ". File affected: " + event.context() + ".");
-//            }
-//            key.reset();
-//        }
-//    }
+    private String inDirectory = System.getProperty("user.home") + "/data/in";
+    private String outDirectory = System.getProperty("user.home") + "/data/out";
 
     public void readAllFilesFromDirectory() throws IOException {
 
@@ -122,15 +92,8 @@ public class FileService {
                                                                 saleModel.setSaleId(salesId);
                                                                 saleModel.setSalesman(salesName);
                                                                 saleModels.add(saleModel);
-//
-                                                                Thread.sleep(1000);
                                                             }
                                                         }
-
-
-//                                                System.out.print(customerModels);
-//                                                Thread.sleep(2000);
-
                                                     } catch (Exception e) {
                                                         e.printStackTrace();
                                                     }
@@ -139,9 +102,6 @@ public class FileService {
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
-//                                    System.out.println(saleModels.size());
-
-
                                 }
                         );
                 this.writeFileToDirectory(salesmanModels, customerModels, saleModels);
@@ -200,7 +160,7 @@ public class FileService {
     private String getWorseSaleman(List<SaleModel> saleModels) {
 
         String worseSalesman = "";
-        double  aux = 0;
+        double aux = 0;
         for (SaleModel sale : saleModels) {
             double minSum = sale.getSaleDetais().stream().mapToDouble(SaleDetaillModel::getPriceOfSale).sum();
             if (aux == 0) {
