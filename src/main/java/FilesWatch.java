@@ -1,3 +1,4 @@
+import model.CustomerModel;
 import model.SalesmanModel;
 
 import java.io.File;
@@ -45,39 +46,57 @@ public class FilesWatch {
 
     public void readAllFilesFromDirectory() throws IOException {
         List<SalesmanModel> salesmanModels = new ArrayList<>();
-        try (Stream<Path> paths = Files.walk(Paths.get(inDirectory))) {
-            paths
-                    .filter(Files::isRegularFile)
-                    .forEach(x -> {
-                        try {
-                            String fileString = new String(Files.readAllBytes(x.toAbsolutePath()));
+        List<CustomerModel> customerModels = new ArrayList<>();
+        while (true) {
+            try (Stream<Path> paths = Files.walk(Paths.get(inDirectory))) {
+                paths
+                        .filter(Files::isRegularFile)
+                        .forEach(file -> {
+                            try (Stream<String> stream = Files.lines(file)) {
+                                stream
+                                        .forEach(x -> {
+                                            try {
+                                                if (!x.isEmpty() && !x.trim().equals("")) {
+                                                    x = x.trim();
+                                                    if (x.substring(0, 3).equals("001")) {
+                                                        String[] fields = x.split("\\ç");
 
-                            if (fileString.substring(0, 3).equals("001")) {
-                                String[] fields = fileString.split("\\ç");
-                                if (fields[3].contains("\n")) {
-                                    fields[3] = fields[3].split("\n")[0];
-                                }
-                                SalesmanModel salesmanModel = new SalesmanModel(
-                                        fields[0], fields[1], fields[2], ((Float.parseFloat(fields[3])))
-                                );
+                                                        SalesmanModel salesmanModel = new SalesmanModel(
+                                                                fields[0], fields[1], fields[2], ((Float.parseFloat(fields[3])))
+                                                        );
 
-                                salesmanModels.add(salesmanModel);
+                                                        salesmanModels.add(salesmanModel);
+                                                    } else if (x.substring(0, 3).equals("002")) {
+                                                        String[] fields = x.split("\\ç");
+                                                        CustomerModel customerModel = new CustomerModel(
+                                                                fields[0], fields[1], fields[2], fields[3]);
+
+                                                        customerModels.add(customerModel);
+                                                    } else if (x.substring(0, 3).equals("003")) {
+                                                        String[] fields = x.split("\\ç");
+                                                        String id = fields[0];
+                                                        String salesId = fields[1];
+
+                                                        String salesDetails = fields[2];
+                                                    }
+                                                }
+
+
+                                                System.out.print(customerModels);
+                                                Thread.sleep(2000);
+
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                        });
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                            else if (fileString.substring(0, 3).equals("002")) {
-//                                System.out.print("Achou!!!");
-                            }
-                            else if (fileString.substring(0, 3).equals("003")) {
-//                                System.out.print("Achou!!!");
-                            }
-                            System.out.print(salesmanModels);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
+                        });
+
+            }
         }
-    }
-
-    public void writeOutputFile() {
 
     }
 }
