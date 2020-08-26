@@ -14,6 +14,10 @@ public class SaleDetaillModel {
         this.price = price;
     }
 
+    public float getPriceOfSale() {
+        return this.quantityItem * this.price;
+    }
+
     public String getItemId() {
         return itemId;
     }

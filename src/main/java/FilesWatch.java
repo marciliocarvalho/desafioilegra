@@ -6,9 +6,14 @@ import model.SalesmanModel;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class FilesWatch {
 
@@ -78,6 +83,7 @@ public class FilesWatch {
                                                                 customerModels.add(customerModel);
                                                             } else if (x.substring(0, 3).equals("003")) {
                                                                 SaleModel saleModel = new SaleModel();
+                                                                SaleDetaillModel saleDetaillModel = new SaleDetaillModel();
 
                                                                 String[] fields = x.split("\\ç");
 
@@ -92,12 +98,23 @@ public class FilesWatch {
 
 
                                                                 for (int i = 0; i < salesDetailsArray.length; i++) {
+                                                                    saleDetaillModel = new SaleDetaillModel();
+                                                                    String[] aux = salesDetailsArray[i].split("\\-");
 
+                                                                    saleDetaillModel.setItemId(aux[0]);
+                                                                    saleDetaillModel.setQuantityItem(Float.parseFloat(
+                                                                            aux[1]
+                                                                    ));
+                                                                    saleDetaillModel.setPrice(Float.parseFloat(aux[2]));
+
+                                                                    saleModel.getSaleDetais().add(saleDetaillModel);
                                                                 }
 
-
-
-//                                                        System.out.println(salesDetailsArray[0]);
+                                                                saleModel.setId(id);
+                                                                saleModel.setSaleId(salesId);
+                                                                saleModel.setSalesman(salesName);
+                                                                saleModels.add(saleModel);
+//
                                                                 Thread.sleep(1000);
                                                             }
                                                         }
@@ -114,12 +131,66 @@ public class FilesWatch {
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
-                                    System.out.println(customerModels.size());
+//                                    System.out.println(saleModels.size());
+
+                                    this.writeFileToDirectory(salesmanModels, customerModels, saleModels);
                                 }
                         );
 
             }
         }
 
+    }
+
+    private void writeFileToDirectory(List<SalesmanModel> salesmanModels, List<CustomerModel> customerModels, List<SaleModel> saleModels) {
+        int customerQuantity = customerModels.size();
+        int salesmanQuantity = salesmanModels.size();
+        String moreExpensiveSaleId = getMoreExpensiveSaleId(saleModels);
+        String worseSalesman = getWorseSaleman(saleModels);
+
+
+        System.out.println(moreExpensiveSaleId);
+
+    }
+
+    private String getMoreExpensiveSaleId(List<SaleModel> saleModels) {
+
+        String moreExpensiveSaleId = "";
+        float aux = 0;
+        for (SaleModel sale: saleModels) {
+            float max = Collections.max(sale.getSaleDetais(), Comparator.comparing(SaleDetaillModel::getPriceOfSale)).getPriceOfSale();
+            if (aux == 0) {
+                aux = max;
+            }
+            else if (aux < max) {
+                aux = max;
+                moreExpensiveSaleId = sale.getSalesman();
+            }
+        }
+
+        return moreExpensiveSaleId;
+    }
+
+    private String getWorseSaleman(List<SaleModel> saleModels) {
+        float minor1 = 0;
+        String worseSalesman = "";
+        for (SaleModel sale : saleModels) {
+            float minor2 = 0;
+            for (SaleDetaillModel detail : sale.getSaleDetais()) {
+                if (minor2 == 0) {
+                    minor2 = detail.getPriceOfSale();
+                } else if (minor2 >= detail.getPriceOfSale()) {
+                    minor2 = detail.getPriceOfSale();
+                    worseSalesman = sale.getSalesman();
+                }
+            }
+            if (minor1 == 0) {
+                minor1 = minor2;
+            } else if (minor1 >= minor2) {
+                minor1 = minor2;
+                worseSalesman = sale.getSalesman();
+            }
+        }
+        return worseSalesman;
     }
 }
