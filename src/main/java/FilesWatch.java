@@ -58,7 +58,7 @@ public class FilesWatch {
                                         fields[0], fields[1], fields[2], Double.parseDouble(fields[3])
                                 );
 
-                                System.out.print(salesmanModel);
+                                salesmanModels.add(salesmanModel);
                             }
                             else if (fileString.substring(0, 3).equals("002")) {
 //                                System.out.print("Achou!!!");
@@ -69,8 +69,6 @@ public class FilesWatch {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-
-                        SalesmanModel salesmanModel = new SalesmanModel();
                     });
         }
     }

@@ -1,10 +1,10 @@
 package model;
 
 public class SalesmanModel {
-    String id;
-    String cpf;
-    String name;
-    double salary;
+    private String id;
+    private String cpf;
+    private String name;
+    private double salary;
 
     public SalesmanModel() {
     }
