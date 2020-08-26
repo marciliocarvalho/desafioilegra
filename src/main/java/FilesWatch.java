@@ -54,8 +54,11 @@ public class FilesWatch {
 
                             if (fileString.substring(0, 3).equals("001")) {
                                 String[] fields = fileString.split("\\ç");
+                                if (fields[3].contains("\n")) {
+                                    fields[3] = fields[3].split("\n")[0];
+                                }
                                 SalesmanModel salesmanModel = new SalesmanModel(
-                                        fields[0], fields[1], fields[2], Double.parseDouble(fields[3])
+                                        fields[0], fields[1], fields[2], ((Float.parseFloat(fields[3])))
                                 );
 
                                 salesmanModels.add(salesmanModel);
@@ -66,6 +69,7 @@ public class FilesWatch {
                             else if (fileString.substring(0, 3).equals("003")) {
 //                                System.out.print("Achou!!!");
                             }
+                            System.out.print(salesmanModels);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

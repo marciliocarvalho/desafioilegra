@@ -4,12 +4,12 @@ public class SalesmanModel {
     private String id;
     private String cpf;
     private String name;
-    private double salary;
+    private float salary;
 
     public SalesmanModel() {
     }
 
-    public SalesmanModel(String id, String cpf, String name, double salary) {
+    public SalesmanModel(String id, String cpf, String name, float salary) {
         this.id = id;
         this.cpf = cpf;
         this.name = name;
@@ -44,7 +44,7 @@ public class SalesmanModel {
         return salary;
     }
 
-    public void setSalary(double salary) {
+    public void setSalary(float salary) {
         this.salary = salary;
     }
 
