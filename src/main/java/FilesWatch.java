@@ -149,22 +149,20 @@ public class FilesWatch {
         String worseSalesman = getWorseSaleman(saleModels);
 
 
-        System.out.println(moreExpensiveSaleId);
-
     }
 
     private String getMoreExpensiveSaleId(List<SaleModel> saleModels) {
 
         String moreExpensiveSaleId = "";
         float aux = 0;
-        for (SaleModel sale: saleModels) {
-            float max = Collections.max(sale.getSaleDetais(), Comparator.comparing(SaleDetaillModel::getPriceOfSale)).getPriceOfSale();
+        for (SaleModel sale : saleModels) {
+            SaleDetaillModel detail = Collections.max(sale.getSaleDetais(), Comparator.comparing(SaleDetaillModel::getPriceOfSale));
             if (aux == 0) {
-                aux = max;
-            }
-            else if (aux < max) {
-                aux = max;
-                moreExpensiveSaleId = sale.getSalesman();
+                aux = detail.getPriceOfSale();
+                moreExpensiveSaleId = sale.getSaleId();
+            } else if (detail.getPriceOfSale() > aux) {
+                aux = detail.getPriceOfSale();
+                moreExpensiveSaleId = sale.getSaleId();
             }
         }
 
@@ -172,25 +170,21 @@ public class FilesWatch {
     }
 
     private String getWorseSaleman(List<SaleModel> saleModels) {
-        float minor1 = 0;
+
         String worseSalesman = "";
+        float aux = 0;
         for (SaleModel sale : saleModels) {
-            float minor2 = 0;
-            for (SaleDetaillModel detail : sale.getSaleDetais()) {
-                if (minor2 == 0) {
-                    minor2 = detail.getPriceOfSale();
-                } else if (minor2 >= detail.getPriceOfSale()) {
-                    minor2 = detail.getPriceOfSale();
-                    worseSalesman = sale.getSalesman();
-                }
-            }
-            if (minor1 == 0) {
-                minor1 = minor2;
-            } else if (minor1 >= minor2) {
-                minor1 = minor2;
+            SaleDetaillModel detail = Collections.min(sale.getSaleDetais(), Comparator.comparing(SaleDetaillModel::getPriceOfSale));
+            if (aux == 0) {
+                aux = detail.getPriceOfSale();
+                worseSalesman = sale.getSalesman();
+            } else if (detail.getPriceOfSale() < aux) {
+                aux = detail.getPriceOfSale();
                 worseSalesman = sale.getSalesman();
             }
         }
+
         return worseSalesman;
     }
+
 }
