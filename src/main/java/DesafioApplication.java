@@ -1,16 +1,12 @@
-import java.io.File;
+import service.FileService;
+
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.Observer;
 
 public class DesafioApplication {
 
     public static void main(String args[]) throws IOException, InterruptedException {
-//        FilesWatch filesWatch = new FilesWatch();
-//        filesWatch.watchDirectoryFiles();
-
-        FilesWatch filesWatch = new FilesWatch();
-        filesWatch.readAllFilesFromDirectory();
+        FileService fileService = new FileService();
+        fileService.readAllFilesFromDirectory();
     }
 }
 

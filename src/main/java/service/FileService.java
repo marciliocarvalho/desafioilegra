@@ -1,10 +1,14 @@
+package service;
+
 import model.CustomerModel;
 import model.SaleDetaillModel;
 import model.SaleModel;
 import model.SalesmanModel;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -15,44 +19,48 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class FilesWatch {
+public class FileService {
 
     String inDirectory = System.getProperty("user.home") + "/data/in";
+    String outDirectory = System.getProperty("user.home") + "/data/out";
 
-    public void watchDirectoryFiles() throws IOException, InterruptedException {
-
-        File directory = new File(inDirectory);
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
-
-        WatchService watchService
-                = FileSystems.getDefault().newWatchService();
-
-        Path path = Paths.get(inDirectory);
-
-        path.register(
-                watchService,
-                StandardWatchEventKinds.ENTRY_CREATE,
-                StandardWatchEventKinds.ENTRY_DELETE,
-                StandardWatchEventKinds.ENTRY_MODIFY);
-
-        WatchKey key;
-        while ((key = watchService.take()) != null) {
-            for (WatchEvent<?> event : key.pollEvents()) {
-
-                System.out.println(
-                        "Event kind:" + event.kind()
-                                + ". File affected: " + event.context() + ".");
-            }
-            key.reset();
-        }
-    }
+//    public void watchDirectoryFiles() throws IOException, InterruptedException {
+//
+//        File directory = new File(inDirectory);
+//        if (!directory.exists()) {
+//            directory.mkdir();
+//        }
+//
+//        WatchService watchService
+//                = FileSystems.getDefault().newWatchService();
+//
+//        Path path = Paths.get(inDirectory);
+//
+//        path.register(
+//                watchService,
+//                StandardWatchEventKinds.ENTRY_CREATE,
+//                StandardWatchEventKinds.ENTRY_DELETE,
+//                StandardWatchEventKinds.ENTRY_MODIFY);
+//
+//        WatchKey key;
+//        while ((key = watchService.take()) != null) {
+//            for (WatchEvent<?> event : key.pollEvents()) {
+//
+//                System.out.println(
+//                        "Event kind:" + event.kind()
+//                                + ". File affected: " + event.context() + ".");
+//            }
+//            key.reset();
+//        }
+//    }
 
     public void readAllFilesFromDirectory() throws IOException {
 
-
         while (true) {
+            if (!Files.exists(Paths.get(inDirectory))) {
+                File file = new File(inDirectory);
+                file.mkdir();
+            }
             List<SalesmanModel> salesmanModels = new ArrayList<>();
             List<CustomerModel> customerModels = new ArrayList<>();
             List<SaleModel> saleModels = new ArrayList<>();
@@ -133,22 +141,42 @@ public class FilesWatch {
                                     }
 //                                    System.out.println(saleModels.size());
 
-                                    this.writeFileToDirectory(salesmanModels, customerModels, saleModels);
+
                                 }
                         );
+                this.writeFileToDirectory(salesmanModels, customerModels, saleModels);
 
             }
         }
 
     }
 
-    private void writeFileToDirectory(List<SalesmanModel> salesmanModels, List<CustomerModel> customerModels, List<SaleModel> saleModels) {
+    private void writeFileToDirectory(List<SalesmanModel> salesmanModels, List<CustomerModel> customerModels, List<SaleModel> saleModels) throws IOException {
+        String outFile = outDirectory + "/out.txt";
+
+        if (!Files.exists(Paths.get(outDirectory))) {
+            File file = new File(outDirectory);
+            file.mkdir();
+        }
+
+        if (Files.notExists(Paths.get(outFile))) {
+            File file = new File(outFile);
+            file.createNewFile();
+        }
+
         int customerQuantity = customerModels.size();
         int salesmanQuantity = salesmanModels.size();
         String moreExpensiveSaleId = getMoreExpensiveSaleId(saleModels);
         String worseSalesman = getWorseSaleman(saleModels);
 
-
+        List<String> lines = Arrays.asList(
+                "Total de Clientes: " + customerQuantity,
+                "Total de Vendedores: " + salesmanQuantity,
+                "Id da Venda mais cara: " + moreExpensiveSaleId,
+                "Pior Vendedor: " + worseSalesman
+        );
+        Path file = Paths.get(outFile);
+        Files.write(file, lines, StandardCharsets.UTF_8);
     }
 
     private String getMoreExpensiveSaleId(List<SaleModel> saleModels) {
@@ -172,14 +200,14 @@ public class FilesWatch {
     private String getWorseSaleman(List<SaleModel> saleModels) {
 
         String worseSalesman = "";
-        float aux = 0;
+        double  aux = 0;
         for (SaleModel sale : saleModels) {
-            SaleDetaillModel detail = Collections.min(sale.getSaleDetais(), Comparator.comparing(SaleDetaillModel::getPriceOfSale));
+            double minSum = sale.getSaleDetais().stream().mapToDouble(SaleDetaillModel::getPriceOfSale).sum();
             if (aux == 0) {
-                aux = detail.getPriceOfSale();
+                aux = minSum;
                 worseSalesman = sale.getSalesman();
-            } else if (detail.getPriceOfSale() < aux) {
-                aux = detail.getPriceOfSale();
+            } else if (minSum < aux) {
+                aux = minSum;
                 worseSalesman = sale.getSalesman();
             }
         }
