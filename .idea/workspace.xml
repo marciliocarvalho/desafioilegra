@@ -104,4 +104,13 @@
     </task>
     <servers />
   </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="this.salesmanModels.equals(salesmanModels)&#10;                            &amp;&amp; this.customerModels.equals(customerModels)&#10;                            &amp;&amp; this.saleModels.equals(saleModels)" />
+        <watch expression="this.customerModels" />
+        <watch expression="customerModels" />
+      </configuration>
+    </watches-manager>
+  </component>
 </project>

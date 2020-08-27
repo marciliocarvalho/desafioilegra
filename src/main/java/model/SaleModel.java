@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SaleModel {
     private String id;
@@ -61,4 +62,19 @@ public class SaleModel {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SaleModel saleModel = (SaleModel) o;
+        return Objects.equals(id, saleModel.id) &&
+                Objects.equals(saleId, saleModel.saleId) &&
+                Objects.equals(saleDetais, saleModel.saleDetais) &&
+                Objects.equals(salesman, saleModel.salesman);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, saleId, saleDetais, salesman);
+    }
 }

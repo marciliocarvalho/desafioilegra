@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class CustomerModel {
     private String id;
     private String cnpj;
@@ -56,5 +58,21 @@ public class CustomerModel {
                 ", name='" + name + '\'' +
                 ", businessArea='" + businessArea + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CustomerModel that = (CustomerModel) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(cnpj, that.cnpj) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(businessArea, that.businessArea);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, cnpj, name, businessArea);
     }
 }

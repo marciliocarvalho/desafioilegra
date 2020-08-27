@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class SaleDetaillModel {
     private String itemId;
     private float quantityItem;
@@ -49,5 +51,20 @@ public class SaleDetaillModel {
                 ", quantityItem=" + quantityItem +
                 ", price=" + price +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SaleDetaillModel that = (SaleDetaillModel) o;
+        return Float.compare(that.quantityItem, quantityItem) == 0 &&
+                Float.compare(that.price, price) == 0 &&
+                Objects.equals(itemId, that.itemId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(itemId, quantityItem, price);
     }
 }
