@@ -19,13 +19,22 @@ public class FileService {
     private final String inDirectory = System.getProperty("user.home") + "/data/in";
     private final String outDirectory = System.getProperty("user.home") + "/data/out";
 
+    List<SalesmanModel> salesmanModels = new ArrayList<>();
+    List<CustomerModel> customerModels = new ArrayList<>();
+    List<SaleModel> saleModels = new ArrayList<>();
+
     public void readAllFilesFromDirectory() throws IOException {
 
+        if (!Files.exists(Paths.get(inDirectory))) {
+            File file = new File(inDirectory);
+            file.mkdir();
+        }
+
+        boolean firstTime = true;
+
+        majorLoop:
         while (true) {
-            if (!Files.exists(Paths.get(inDirectory))) {
-                File file = new File(inDirectory);
-                file.mkdir();
-            }
+
             List<SalesmanModel> salesmanModels = new ArrayList<>();
             List<CustomerModel> customerModels = new ArrayList<>();
             List<SaleModel> saleModels = new ArrayList<>();
@@ -99,9 +108,31 @@ public class FileService {
                                     }
                                 }
                         );
+
+                if (firstTime) {
+                    this.salesmanModels = salesmanModels;
+                    this.customerModels = customerModels;
+                    this.saleModels = saleModels;
+                } else {
+                    boolean dataIsEquals = this.salesmanModels.equals(salesmanModels)
+                            && this.customerModels.equals(customerModels)
+                            && this.saleModels.equals(saleModels);
+                    if (dataIsEquals) {
+
+                        firstTime = false;
+                        continue majorLoop;
+                    } else {
+                        this.salesmanModels = salesmanModels;
+                        this.customerModels = customerModels;
+                        this.saleModels = saleModels;
+                    }
+                }
+
                 this.writeFileToDirectory(salesmanModels, customerModels, saleModels);
 
             }
+
+            firstTime = false;
         }
 
     }
