@@ -99,12 +99,12 @@ public class FileService {
                                                             }
                                                         }
                                                     } catch (Exception e) {
-                                                        e.printStackTrace();
+                                                        System.out.println(e.getMessage());
                                                     }
                                                 });
 
                                     } catch (IOException e) {
-                                        e.printStackTrace();
+                                        System.out.println(e.getMessage());
                                     }
                                 }
                         );
